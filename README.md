@@ -1,18 +1,4 @@
----
-license: mit
-base_model: unsloth/Qwen2.5-0.5B-Instruct
-tags:
-  - disaster-response
-  - reinforcement-learning
-  - grpo
-  - unsloth
-  - trl
-  - emergency-ai
-  - lora
-datasets:
-  - self-generated
-pipeline_tag: text-generation
----
+
 
 # 🌊 Disaster Response Coordinator
 
@@ -119,21 +105,32 @@ The model generates dispatch decisions, they are scored by the reward function, 
 
 ### SFT Loss
 
-![SFT Loss](01_sft_loss.png)
+![SFT Loss]
 
 <img width="1160" height="710" alt="image" src="https://github.com/user-attachments/assets/b1ea8f32-145c-4e65-92f9-a15182a384d2" />
+
 
 Loss drops from 1.75 to 0.21 in roughly 300 steps then plateaus. Train and eval track each other confirming no overfitting — the model has learned the dispatch format cleanly.
 
 ### GRPO Reward Signal
 
-![GRPO Reward](02_grpo_reward.png)
+![GRPO Reward]
+
+<img width="1164" height="710" alt="image" src="https://github.com/user-attachments/assets/032d1c73-ec5e-45aa-8e70-a6f97b40f98c" />
+
+
+
 
 Reward improves from -0.8 to -0.3 over 100 policy gradient steps. The early negative region comes from the model hallucinating invalid IDs, each penalised at -0.5. It corrects quickly.
 
 ### GRPO Policy Loss
 
-![GRPO Loss](03_grpo_loss.png)
+![GRPO Loss]
+
+<img width="1196" height="710" alt="image" src="https://github.com/user-attachments/assets/bd4cd379-fb49-46b4-9ba8-49d3b1a598df" />
+
+
+
 
 Policy loss converges to 0.0001. The KL constraint held — no policy collapse.
 
@@ -143,13 +140,19 @@ Policy loss converges to 0.0001. The KL constraint held — no policy collapse.
 
 ### Expert Collection Scores
 
-![Collection Scores](04_collection_scores.png)
+![Collection Scores]
+
+<img width="1154" height="710" alt="image" src="https://github.com/user-attachments/assets/b22203f9-cb47-430e-9afe-98da03f72aa4" />
+
 
 The greedy oracle scored 100% on Easy, 85% on Medium, and 76% on Hard across 130 episodes. The Hard ceiling is not a training failure — it reflects the geometry. With 75 victims, 20 resources, and 6-minute Red countdowns, even perfect dispatch loses some victims to distance.
 
 ### Greedy vs LLM Head to Head
 
-![Greedy vs LLM](05_greedy_vs_llm.png)
+![Greedy vs LLM]
+
+<img width="1154" height="685" alt="image" src="https://github.com/user-attachments/assets/143519b8-b2b9-4714-ae65-b75089cda2f8" />
+
 
 | Difficulty | Greedy Baseline | LLM Agent | Change |
 |---|---|---|---|
@@ -159,21 +162,33 @@ The greedy oracle scored 100% on Easy, 85% on Medium, and 76% on Hard across 130
 
 ### Improvement Delta
 
-![Delta](06_delta_improvement.png)
+![Delta]
+
+<img width="1158" height="686" alt="image" src="https://github.com/user-attachments/assets/ae96cfd9-d4dc-46af-ba17-4e4a1852d387" />
+
 
 Easy and Medium show LLM parity or improvement. Hard shows regression — and this is the most interesting result, not a failure. The LLM is routing helicopters aggressively to distant Red victims and leaving Green victims to slower ground units. That is strategically correct reasoning that the greedy baseline does not do. With 200+ GRPO steps the Hard gap should close.
 
 ### Victim Outcomes Side by Side
 
-![Outcome Greedy](07_outcome_greedy.png)
+![Outcome Greedy]
 
-![Outcome LLM](08_outcome_llm.png)
+<img width="1143" height="714" alt="image" src="https://github.com/user-attachments/assets/a3173927-64d0-4cd2-a415-ff1a5a5853c6" />
+
+
+![Outcome LLM]
+
+<img width="1143" height="714" alt="image" src="https://github.com/user-attachments/assets/cc604272-6b33-4d20-8248-3baf4f6361e5" />
+
 
 On Hard mode the LLM agent has a lower deceased count (2.8 vs 3.1) despite a lower rescue score overall. It is trading some slow rescues for fewer deaths — non-trivial triage prioritisation.
 
 ### Rescue Rate by Triage Category
 
-![Heatmap](09_heatmap.png)
+![Heatmap]
+
+<img width="1062" height="685" alt="image" src="https://github.com/user-attachments/assets/265de89f-9668-4ce9-9bc2-ea666c96113f" />
+
 
 Red victims are rescued at dramatically higher rates across all difficulties. Green victims on Hard at 54% reflect the resource math — 20 resources cycling through 75 victims with Red and Yellow countdowns burning. Green simply waits.
 
@@ -183,13 +198,19 @@ Red victims are rescued at dramatically higher rates across all difficulties. Gr
 
 ### What Gets Dispatched
 
-![Resource Frequency](10_resource_frequency.png)
+![Resource Frequency]
+
+<img width="1166" height="732" alt="image" src="https://github.com/user-attachments/assets/98d97393-59be-417f-b79f-e2fcc4a14439" />
+
 
 Ambulances led with 1,468 missions — fast enough for most victims and available in quantity. Helicopters were used 312 times, reserved precisely for high-priority distant victims rather than burned on nearby easy cases.
 
 ### Rescue Velocity Over Steps
 
-![Cumulative Rescued](11_cumulative_rescued.png)
+![Cumulative Rescued]
+
+<img width="1143" height="710" alt="image" src="https://github.com/user-attachments/assets/f3308122-6477-49e2-ba4a-ff4bf77c261d" />
+
 
 Easy is complete by dispatch step 4. Medium and Hard show the long tail of cycling resources over 7+ rounds as vehicles complete missions and return for reassignment.
 
@@ -197,7 +218,10 @@ Easy is complete by dispatch step 4. Medium and Hard show the long tail of cycli
 
 ## Final Numbers
 
-![Scorecard](12_scorecard.png)
+![Scorecard]
+
+<img width="843" height="770" alt="image" src="https://github.com/user-attachments/assets/10ecba56-5c5f-434e-a17e-4691011d794a" />
+
 
 | Metric | Value |
 |---|---|
@@ -222,47 +246,6 @@ The core problem — assign N heterogeneous agents to M tasks under time pressur
 
 **The deeper question:** At what parameter count does an LLM stop being a text predictor and start being a decision-making agent? A 500M model trained for 35 minutes gets within 2% of an optimised greedy baseline on a real-time rescue simulation. That is a non-trivial answer.
 
----
 
-## Try It
 
-```python
-from transformers import AutoTokenizer, AutoModelForCausalLM
 
-model     = AutoModelForCausalLM.from_pretrained("YOUR_USERNAME/disaster-response-agent")
-tokenizer = AutoTokenizer.from_pretrained("YOUR_USERNAME/disaster-response-agent")
-
-prompt = """<|system|>You are an emergency dispatch AI. Assign ALL resources in priority order.
-<|user|>[DISASTER DISPATCH]
-Progress: 0/5 rescued (0%)
-UNASSIGNED VICTIMS:
-  victim_0000 | Red    | P9 | wait=0.0min | dist=3.2km
-  victim_0001 | Yellow | P6 | wait=0.0min | dist=7.1km
-AVAILABLE RESOURCES:
-  resource_ambulance_0  | ambulance  | 60 km/h
-  resource_helicopter_0 | helicopter | 120 km/h
-Return JSON list:
-<|assistant|>"""
-
-inputs = tokenizer(prompt, return_tensors="pt")
-output = model.generate(**inputs, max_new_tokens=100, temperature=0.1)
-print(tokenizer.decode(output[0], skip_special_tokens=True))
-```
-
-Expected output:
-
-```json
-[
-  {"resource_id": "resource_helicopter_0", "victim_id": "victim_0000", "priority": 9},
-  {"resource_id": "resource_ambulance_0",  "victim_id": "victim_0001", "priority": 6}
-]
-```
-
----
-
-## Links
-
-- Model: YOUR_USERNAME/disaster-response-agent on Hugging Face
-- Live Environment: https://YOUR_USERNAME-disaster-response.hf.space
-- Training Notebook: Google Colab (link in Space repository)
-- Blog Post: See blog.md in this repository
